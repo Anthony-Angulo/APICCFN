@@ -4,7 +4,8 @@ const {
     getAllCodeBars,
     getCodearById,
     updateCodeBar,
-    getCodeBar
+    getCodeBar,
+    getGTIN
 } = require("../controllers/codeBars");
 
 const router = express.Router();
@@ -21,7 +22,11 @@ router
 
 router
     .route("/find/:id")
-    .get(getCodearById)
+    .get(getCodearById);
+
+router
+    .route("/gtin/:itemcode")
+    .get(getGTIN);
 
 
 

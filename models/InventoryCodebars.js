@@ -8,7 +8,7 @@ const InventoryCodebars = function (inventoryCodeBars) {
 InventoryCodebars.create = (newInventoryCodebars, result) => {
 
   if(newInventoryCodebars.length == 0) {
-    result(null, "no cb");
+    result(null, {res: 0});
     return;
   }
 

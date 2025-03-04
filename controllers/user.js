@@ -12,3 +12,15 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
         }
     });
 });
+
+exports.getAllServer = asyncHandler(async (req, res, next) => {
+    User.getAllIp((err, data) => {
+        if(err) {
+            res.status(500).send({
+                message: err.message
+            });
+        } else {
+            res.status(200).send(data);
+        }
+    });
+});

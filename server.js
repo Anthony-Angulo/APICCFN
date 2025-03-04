@@ -20,13 +20,19 @@ const inventoryDetail = require("./routes/inventoryDetail");
 const inventoryCodebar = require("./routes/inventoryCodebars");
 const codeBars = require("./routes/codeBars");
 const invoice = require("./routes/invoice");
+const location = require("./routes/locations");
+const productLocation = require("./routes/productLocations");
+const asignacion = require("./routes/asignaciones");
+const asignacionDetail = require("./routes/asignacionesDetail");
+const crBars = require("./routes/crBars");
+const replicas = require("./routes/replicas");
 
 //Initailize Express
 const app = express();
 
 //Enable Body Parser
 app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true}));
 
 //Enable Loggin Middleware
 app.use(morgan('combined'));
@@ -44,6 +50,12 @@ app.use("/api/inventoryDetail", inventoryDetail);
 app.use("/api/inventoryCodebar", inventoryCodebar);
 app.use("/api/codeBar", codeBars);
 app.use("/api/invoice", invoice);
+app.use("/api/locations", location);
+app.use("/api/productLocation", productLocation);
+app.use("/api/asignaciones", asignacion);
+app.use("/api/asignacionesDetail", asignacionDetail);
+app.use("/api/crBar", crBars);
+app.use("/api/replica", replicas);
 
 const PORT = process.env.PORT || 5005;
 

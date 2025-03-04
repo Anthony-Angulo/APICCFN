@@ -15,5 +15,16 @@ User.getAll = result => {
         result(null, res);
     });
 };
+       
+User.getAllIp = result => {
+    connectionDB.query(`SELECT * FROM ${process.env.DB}.RetailServers`, (err, res) => {
+        if(err) {
+            console.log("error: " , err);
+            result(null, err);
+            return;
+        }
 
+        result(null, res);
+    });
+};
 module.exports = User;

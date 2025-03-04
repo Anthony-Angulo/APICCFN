@@ -6,6 +6,8 @@ exports.createInventoryDetail = asyncHandler(async(req, res, next) => {
         Quantity: req.body.quantity,
         Zone: req.body.zone,
         UserId: req.body.userId,
+        CodeBar: req.body.codeBar,
+        UomCode: req.body.uomCode,
         InventoryProductID: req.body.inventoryProductId
     });
 
@@ -76,6 +78,42 @@ exports.getAllInv = asyncHandler(async(req, res, next) => {
 
 exports.getByZone = asyncHandler(async(req, res, next) => {
     InventoryDetail.findByZone(req.params.id, req.params.zone, (err, data) => {
+        if(err) {
+            if(err.kind === "not_found") {
+                res.status(404).send({
+                    message: `Inventario Con El ID ${req.params.id} No Encontado`
+                });
+            } else {
+                res.status(500).send({
+                    message: `Error Al Buscar Inventario Con El ID ${req.params.id}`
+                });
+            }
+        } else {
+            res.status(200).send(data); 
+        }
+    })
+});
+
+exports.getZones = asyncHandler(async(req, res, next) => {
+    InventoryDetail.findZones(req.params.product,req.params.id,  (err, data) => {
+        if(err) {
+            if(err.kind === "not_found") {
+                res.status(404).send({
+                    message: `Producto con el codigo ${req.params.prod} No Encontado`
+                });
+            } else {
+                res.status(500).send({
+                    message: `Error Al Buscar Producto con el codigo ${req.params.product}`
+                });
+            }
+        } else {
+            res.status(200).send(data); 
+        }
+    })
+});
+
+exports.getByZoneMenudeo = asyncHandler(async(req, res, next) => {
+    InventoryDetail.findByZoneMenudeo(req.params.id, req.params.zone, (err, data) => {
         if(err) {
             if(err.kind === "not_found") {
                 res.status(404).send({

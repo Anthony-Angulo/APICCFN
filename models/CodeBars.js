@@ -89,5 +89,22 @@ CodeBars.updateById = (id, codeBar, result) => {
   );
 };
 
+CodeBars.findGTIN = (itemcode, result) => {
+  connectionDB.query(
+    `SELECT * FROM ${process.env.DB}.ccfn_gs1_128 WHERE U_ItemCode='${itemcode}'`, (err, res) => {
+      if(err) {
+        result(err, null);
+        return;
+    }
+
+    if(res) {
+        result(null, res);
+        return;
+    }
+
+    result({ kind: "not_found"}, null);
+    }
+  )
+};
 
 module.exports = CodeBars;

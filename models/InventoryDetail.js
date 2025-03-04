@@ -4,6 +4,8 @@ const InventoryDetail = function (inventoryDetail) {
   (this.Quantity = inventoryDetail.Quantity),
     (this.Zone = inventoryDetail.Zone),
     (this.UserId = inventoryDetail.UserId),
+    (this.CodeBar = inventoryDetail.CodeBar),
+    (this.UomCode = inventoryDetail.UomCode),
     (this.InventoryProductID = inventoryDetail.InventoryProductID);
 };
 
@@ -23,7 +25,7 @@ InventoryDetail.create = (newInventoryDetail, result) => {
 
 InventoryDetail.findById = (inventoryProductId, result) => {
   connectionDB.query(
-    `SELECT i.ID, i.Quantity, i.Zone, i.DateCreated, i.InventoryProductID, u.UserName FROM ${process.env.DB}.InventoryProductDetails as i
+    `SELECT i.ID, i.Quantity, i.CodeBar, i.UomCode, i.Zone, i.DateCreated, i.InventoryProductID, u.UserName FROM ${process.env.DB}.InventoryProductDetails as i
     JOIN ${process.env.DB}.Users AS u
       ON i.Userid = u.Id 
     WHERE InventoryProductID=${inventoryProductId} AND i.Quantity != 0`,
@@ -63,7 +65,7 @@ InventoryDetail.updateQty = (body, result) => {
   var queries = '';
 
   body.forEach(x => {
-    queries += connectionDB.format(`UPDATE ${process.env.DB}.InventoryProducts SET InvQuantity = ${x.Qty} WHERE ID = ${x.id}; `);
+    queries += `UPDATE ${process.env.DB}.InventoryProducts SET InvQuantity = ${x.Qty} WHERE ID = ${x.id}; `;
   });
 
 
@@ -81,9 +83,12 @@ InventoryDetail.getAll = (body, result) => {
   var queries = '';
 
   body.forEach(x => {
-    queries += connectionDB.format(`SELECT COUNT(*) AS cajas, (SELECT ItemCode FROM ${process.env.DB}.InventoryProducts WHERE ID = ${x}) AS ItemCode FROM ${process.env.DB}.InventoryProductBatches WHERE InventoryProductDetailID IN 
-    (SELECT ID FROM ${process.env.DB}.InventoryProductDetails WHERE InventoryProductID IN (SELECT ID FROM ${process.env.DB}.InventoryProducts WHERE ID = ${x})); `)
+    queries += `SELECT COUNT(*) AS cajas, (SELECT ItemCode FROM ${process.env.DB}.InventoryProducts WHERE ID = ${x}) AS ItemCode FROM ${process.env.DB}.InventoryProductBatches WHERE InventoryProductDetailID IN (SELECT ID FROM ${process.env.DB}.InventoryProductDetails WHERE InventoryProductID IN (SELECT ID FROM ${process.env.DB}.InventoryProducts WHERE ID = ${x})); `
   });
+
+  console.log(queries)
+
+  
 
   connectionDB.query(queries, (err, res) => {
     if(err) {
@@ -105,6 +110,49 @@ InventoryDetail.findByZone = (inventoryID, Zone, result) => {
       if (err) {
         result(err, null);
         return;
+      }
+
+      if (res) {
+        result(null, res);
+        return;
+      }
+
+      // result({ kind: "not_found" }, null);
+    }
+  );
+};
+
+InventoryDetail.findZones = (product, id, result) => {
+  connectionDB.query(
+    `SELECT p.ID, p.ItemCode, p.InventoryID, p.ItemName, i.Quantity, i.Zone FROM ${process.env.DB}.InventoryProductDetails AS i
+    JOIN ${process.env.DB}.InventoryProducts AS p ON i.InventoryProductID = p.ID
+    WHERE p.ItemCode='${product}' AND p.InventoryID=${id}`,
+    (err, res) => {
+      if (err) {
+        result(err, null);
+        return;
+      }
+
+      if (res) {
+        result(null, res);
+        return;
+      }
+
+      // result({ kind: "not_found" }, null);
+    }
+  );
+};
+
+InventoryDetail.findByZoneMenudeo = (inventoryID, Zone, result) => {
+  connectionDB.query(
+    `SELECT p.ID, p.ItemCode, p.ItemName, i.Quantity, i.Zone, i.ID as contador, u.UserName  FROM ${process.env.DB}.InventoryProductDetails AS i
+    JOIN ${process.env.DB}.InventoryProducts AS p ON i.InventoryProductID = p.ID 
+    JOIN ${process.env.DB}.Users AS u ON i.UserId = u.Id
+    WHERE p.InventoryID=${inventoryID} AND i.Zone='${Zone}' ORDER BY contador ASC`,
+    (err, res) => {
+      if (err) {
+        result(err, null);
+        return; 
       }
 
       if (res) {

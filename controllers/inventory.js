@@ -7,7 +7,8 @@ exports.createInventory = asyncHandler(async(req, res, next) => {
         TypeID: req.body.type,
         StatusID: req.body.status,
         WarehouseID: req.body.warehouse,
-        UserID: req.body.userid 
+        UserID: req.body.userid,
+        WhsType: req.body.whsType
     });
 
     Inventory.create(inventory, (err, data) => {

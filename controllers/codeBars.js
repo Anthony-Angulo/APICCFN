@@ -56,6 +56,24 @@ exports.getCodeBar = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.getGTIN = asyncHandler(async (req, res, next) => {
+  CodeBars.findGTIN(req.params.itemcode, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `GTIN Con El codigo ${req.params.itemcode} No Encontado`,
+        });
+      } else {
+        res.status(500).send({
+          message: `Error Al Buscar GTIN Con El codig ${req.params.itemcode}`,
+        });
+      }
+    } else {
+      res.status(200).send(data);
+    }
+  });
+});
+
 exports.getCodearById = asyncHandler(async (req, res, next) => {
   CodeBars.findById(req.params.id, (err, data) => {
     if (err) {

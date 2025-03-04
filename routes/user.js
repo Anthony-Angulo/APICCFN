@@ -1,6 +1,7 @@
 const express= require("express");
 const {
-    getAllUser
+    getAllUser,
+    getAllServer
 } = require("../controllers/user");
 
 const router = express.Router();
@@ -8,5 +9,8 @@ const router = express.Router();
 router
     .route("/")
     .get(getAllUser);
+router
+    .route("/ip")
+    .get(getAllServer);
 
 module.exports = router;

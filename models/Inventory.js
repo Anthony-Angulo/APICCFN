@@ -5,7 +5,8 @@ const Inventory = function(inventory) {
     this.TypeID = inventory.TypeID,
     this.StatusID = inventory.StatusID,
     this.WarehouseID = inventory.WarehouseID,
-    this.UserID = inventory.UserID
+    this.UserID = inventory.UserID,
+    this.WhsType = inventory.WhsType
 }
 
 Inventory.create = (newInventory, result) => {
@@ -40,7 +41,7 @@ Inventory.getAll = result => {
 };
 
 Inventory.getFullActive = result => {
-    connectionDB.query(`SELECT i.ID, t.Label, s.Label as Status, s.id as statusId, w.WhsName, u.Name, u.LastName, i.DateCreated FROM ${process.env.DB}.Inventories AS i 
+    connectionDB.query(`SELECT i.ID, t.Label, s.Label as Status, s.id as statusId, w.WhsName, u.Name, u.LastName, i.DateCreated, i.WhsType FROM ${process.env.DB}.Inventories AS i 
     JOIN  ${process.env.DB}.InventoryTypes AS t 
         ON i.TypeID = t.id 
     JOIN  ${process.env.DB}.Statuses AS s 
@@ -84,8 +85,9 @@ Inventory.getPartialActive = result => {
 }
 
 Inventory.findProductsByUser = (inventoryId, userId, result) => {
-    connectionDB.query(`SELECT * FROM ${process.env.DB}.InventoryProducts AS i WHERE i.InventoryID=${inventoryId} AND i.UserId=${userId}`, (err, res) => {
+    connectionDB.query(`SELECT * FROM ${process.env.DB}.InventoryProducts AS i WHERE i.InventoryID=${inventoryId} AND i.UserId='${userId}'`, (err, res) => {
         if(err) {
+            console.log(err)
             result(err, null);
             return;
         }
@@ -100,7 +102,7 @@ Inventory.findProductsByUser = (inventoryId, userId, result) => {
 }
 
 Inventory.findById = (inventoryId, result) => {
-    connectionDB.query(`SELECT i.ID, t.Label, s.Label as Status, s.id as StatusId, w.WhsName, w.WhsCode, u.Name, i.DateCreated FROM ${process.env.DB}.Inventories AS i 
+    connectionDB.query(`SELECT i.ID, t.Label, s.Label as Status, s.id as StatusId, w.WhsName, w.WhsCode, u.Name, i.DateCreated, i.WhsType FROM ${process.env.DB}.Inventories AS i 
     JOIN  ${process.env.DB}.InventoryTypes AS t 
         ON i.TypeID = t.id 
     JOIN  ${process.env.DB}.Statuses AS s 
